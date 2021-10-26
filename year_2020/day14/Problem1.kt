@@ -51,6 +51,16 @@ class Main {
         }
 }
 
+class BitManipulator {
+    fun setBitAtPosition(number: Long, position: Int): Long {
+        return (1L shl position) or number
+    }
+
+    fun clearBitAtPosition(number: Long, position: Int): Long {
+        return (1L shl position).inv() and number
+    }
+}
+
 class InputParser {
     private val maskRegex = "^mask.*".toRegex()
     private val memRegex = "^mem.*".toRegex()
