@@ -1,3 +1,5 @@
+package year_2020.day14
+
 import java.io.File
 
 class Main {
@@ -47,16 +49,6 @@ class Main {
         File("/Users/oogbe/IdeaProjects/AOC14/src/main/kotlin/input.txt").useLines { data ->
             data.toList()
         }
-}
-
-class BitManipulator {
-    fun setBitAtPosition(number: Long, position: Int): Long {
-        return (1L shl position) or number
-    }
-
-    fun clearBitAtPosition(number: Long, position: Int): Long {
-        return (1L shl position).inv() and number
-    }
 }
 
 class InputParser {

@@ -1,3 +1,5 @@
+package year_2020.day14
+
 import java.io.File
 import kotlin.math.pow
 
@@ -73,7 +75,7 @@ class Main {
     }
 
     private fun readFileAsLinesUsingUseLines(): List<String> =
-        File("input.txt").useLines { data ->
+        File("day14/input.txtut.txt").useLines { data ->
             data.toList()
         }
 }
