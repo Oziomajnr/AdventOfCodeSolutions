@@ -6,7 +6,7 @@ import java.util.*
 
 class Part1 {
     val result =
-        File("/Users/oziomaogbe/AndroidStudioProjects/PgnToGifConverter/app/src/test/java/com/example/pgntogifconverter/util/day_18/input.txt").readLines()
+        File("input.txt").readLines()
             .map {
                 solveExpression(it)
             }.sum()
