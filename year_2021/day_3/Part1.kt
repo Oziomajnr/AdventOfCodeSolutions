@@ -5,7 +5,7 @@ import java.io.File
 
 class DayThree {
     private val fileInput =
-        File("/Users/oziomaogbe/AndroidStudioProjects/PgnToGifConverter/app/src/test/java/com/example/pgntogifconverter/util/twentyone/day_3/input.txt").readLines()
+        File("input.txt").readLines()
 
     private fun solveDay3() {
         val gamma = fileInput.first().mapIndexed { index, value ->
