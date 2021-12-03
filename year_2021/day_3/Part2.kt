@@ -5,7 +5,7 @@ import java.io.File
 
 class Part2 {
     private val input =
-        File("/Users/oziomaogbe/AndroidStudioProjects/PgnToGifConverter/app/src/test/java/com/example/pgntogifconverter/util/twentyone/input.txt").readLines()
+        File("input.txt").readLines()
 
     private fun findGamma() {
         val oxygenNumber = findOxygenNumber(0, input).toInt(2)
