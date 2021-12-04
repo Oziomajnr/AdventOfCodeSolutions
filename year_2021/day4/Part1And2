@@ -81,6 +81,7 @@ class Part1And2 {
                 return true
             }
 
+//TODO: try making this immutable
             var foundUnmark = false
             for (y in 0..input.lastIndex) {
                 if (!input[y][x].marked) {
