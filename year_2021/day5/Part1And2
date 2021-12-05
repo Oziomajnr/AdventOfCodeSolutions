@@ -1,0 +1,136 @@
+import org.junit.Test
+import java.io.File
+import kotlin.math.max
+
+class Part1 {
+    private val fileInput =
+        File("input.txt").readLines()
+
+    private val lines = fileInput.map {
+        val points = it.split(" -> ")
+        Line(
+            Point(points[0].split(',').first().toInt(), points[0].split(',')[1].toInt()),
+            Point(points[1].split(',').first().toInt(), points[1].split(',')[1].toInt())
+        )
+    }
+
+    private val size = lines.map {
+        max(max(it.point1.x, it.point1.y), max(it.point2.x, it.point2.y))
+    }.maxByOrNull {
+        it
+    }!!
+
+    private val inputArray = Array(size + 1) { IntArray(size + 1) { 0 } }
+
+    private fun solvePart1(): Int {
+
+        lines.forEach {
+            when {
+                it.point1.x == it.point2.x -> {
+                    scanVertical(it, inputArray)
+                }
+                it.point1.y == it.point2.y -> {
+                    scanHorizontal(it, inputArray)
+                }
+            }
+        }
+
+        return inputArray.map {
+            it.filter { number ->
+                number >= 2
+            }.size
+        }.sum()
+    }
+
+    private fun solvePart2(): Int {
+
+        lines.forEach {
+            when {
+                it.point1.x == it.point2.x -> {
+                    scanVertical(it, inputArray)
+                }
+                it.point1.y == it.point2.y -> {
+                    scanHorizontal(it, inputArray)
+                }
+                else -> {
+                    scanDiagonal(it, inputArray)
+                }
+            }
+        }
+        
+        return inputArray.map {
+            it.filter { number ->
+                number >= 2
+            }.size
+        }.sum()
+    }
+
+    private fun scanHorizontal(line: Line, array: Array<IntArray>) {
+        val range = if (line.point1.x > line.point2.x) {
+            line.point1.x downTo line.point2.x
+        } else {
+            line.point1.x..line.point2.x
+        }
+        for (x in range) {
+            (array[line.point1.y][x])++
+        }
+    }
+
+    private fun scanVertical(line: Line, array: Array<IntArray>) {
+        val range = if (line.point1.y > line.point2.y) {
+            line.point1.y downTo line.point2.y
+        } else {
+            line.point1.y..line.point2.y
+        }
+        for (y in range) {
+            (array[y][line.point1.x])++
+        }
+    }
+
+    private fun scanDiagonal(line: Line, array: Array<IntArray>) {
+        var x1 = line.point1.x
+        val x2 = line.point2.x
+        var y1 = line.point1.y
+        val y2 = line.point2.y
+        when {
+            x1 > x2 && y1 < y2 -> {
+                while (x1 >= x2 && y1 <= y2) {
+                    (array[y1][x1])++
+                    x1--
+                    y1++
+                }
+            }
+            x1 < x2 && y1 < y2 -> {
+                while (x1 <= x2 && y1 <= y2) {
+                    (array[y1][x1])++
+                    x1++
+                    y1++
+                }
+            }
+            x1 > x2 && y1 > y2 -> {
+                while (x1 >= x2 && y1 >= y2) {
+                    (array[y1][x1])++
+                    x1--
+                    y1--
+                }
+            }
+            x1 < x2 && y1 > y2 -> {
+                while (x1 <= x2 && y1 >= y2) {
+                    (array[y1][x1])++
+                    x1++
+                    y1--
+                }
+            }
+        }
+
+    }
+
+    @Test
+    fun test() {
+        println(solvePart1())
+        println(solvePart2())
+    }
+}
+
+data class Point(val x: Int, val y: Int)
+data class Line(val point1: Point, val point2: Point)
