@@ -1,0 +1,32 @@
+ private val fileInput =
+        File("/Users/oziomaogbe/AndroidStudioProjects/PgnToGifConverter/app/src/test/java/com/example/pgntogifconverter/util/twentyone/day7/input.txt").readLines()
+            .first().split(",")
+            .map {
+                it.toInt()
+            }
+
+    private fun solvePart1() {
+        val max = fileInput.maxOrNull()!!
+        val groupedInput = fileInput.groupBy {
+            it
+        }.mapValues {
+            it.value.count()
+        }
+
+        val costForPosition =  (0..max).map {
+            it to groupedInput.map { (i, count) ->
+                // sum of arithmetic progression with first value of 1 and common difference of 1
+                val cost = (abs(i-it).toDouble()/2)*(2 + (abs(i-it) - 1) * 1)
+                (cost * count).toInt()
+            }.sum()
+        }
+
+        println(costForPosition.minByOrNull {
+            it.second
+        })
+    }
+
+    @Test
+    fun test() {
+        solvePart1()
+    }
