@@ -1,5 +1,5 @@
  private val fileInput =
-        File("/Users/oziomaogbe/AndroidStudioProjects/PgnToGifConverter/app/src/test/java/com/example/pgntogifconverter/util/twentyone/day7/input.txt").readLines()
+        File("input.txt").readLines()
             .first().split(",")
             .map {
                 it.toInt()
