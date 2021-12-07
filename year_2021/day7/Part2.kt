@@ -5,7 +5,7 @@
                 it.toInt()
             }
 
-    private fun solvePart1() {
+    private fun solvePart2() {
         val max = fileInput.maxOrNull()!!
         val groupedInput = fileInput.groupBy {
             it
@@ -28,5 +28,5 @@
 
     @Test
     fun test() {
-        solvePart1()
+        solvePart2()
     }
