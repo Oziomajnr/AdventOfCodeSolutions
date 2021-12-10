@@ -8,7 +8,7 @@
         val openingToClosingBrackets = mapOf(')' to '(', ']' to '[', '}' to '{', '>' to '<')
         val inputStack = fileInput.map {
             val stack = Stack<Char>()
-            for (x in it) {
+           it.forEach { x ->
                 if (openingBrackets.contains(x)) {
                     stack.push(x)
                 } else {
