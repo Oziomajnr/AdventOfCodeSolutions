@@ -6,7 +6,6 @@
         val openingBrackets = setOf('(', '[', '{', '<')
 
         val openingToClosingBrackets = mapOf(')' to '(', ']' to '[', '}' to '{', '>' to '<')
-        val illegalCharacters = mutableListOf<Char>()
         val inputStack = fileInput.map {
             val stack = Stack<Char>()
             for (x in it) {
@@ -16,7 +15,6 @@
                     if (stack.peek() == openingToClosingBrackets[x]) {
                         stack.pop()
                     } else {
-                        illegalCharacters.add(x)
                         return@map Stack()
                     }
                 }
