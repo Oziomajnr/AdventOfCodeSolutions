@@ -14,7 +14,7 @@ class Part2 {
             }
 
     private val instructions =
-        File("/Users/oziomaogbe/AndroidStudioProjects/PgnToGifConverter/app/src/test/java/com/example/pgntogifconverter/util/twentyone/day13/instructions.txt").readLines()
+        File("instructions.txt").readLines()
             .map {
                 val instruction = it.split(' ').last().split('=')
                 Instruction(instruction[0], instruction[1].toInt())
