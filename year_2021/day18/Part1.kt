@@ -1,4 +1,3 @@
-package com.example.pgntogifconverter.util.twentyone.day18
 
 import org.junit.Assert
 import org.junit.Test
@@ -6,7 +5,7 @@ import java.io.File
 
 class Part1 {
     private val fileInput =
-        File("/Users/oziomaogbe/AndroidStudioProjects/PgnToGifConverter/app/src/test/java/com/example/pgntogifconverter/util/twentyone/day18/input.txt").readLines()
+        File("input.txt").readLines()
 
     private fun solvePart1(): String {
         return fileInput.reduce { acc, input ->
