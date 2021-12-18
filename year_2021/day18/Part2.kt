@@ -1,11 +1,10 @@
-package com.example.pgntogifconverter.util.twentyone.day18
 
 import org.junit.Test
 import java.io.File
 
 class Part2 {
     private val fileInput =
-        File("/Users/oziomaogbe/AndroidStudioProjects/PgnToGifConverter/app/src/test/java/com/example/pgntogifconverter/util/twentyone/day18/input.txt").readLines()
+        File("input.txt").readLines()
     var largest = Int.MIN_VALUE
     private val checked = mutableSetOf<String>()
     private fun solvePart2() {
