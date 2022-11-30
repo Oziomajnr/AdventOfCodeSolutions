@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/../solutions/src/year_2021">
+      <sourceFolder url="file://$MODULE_DIR$/../solutions/src/year_2021/day1" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../solutions/src/year_2021/day10" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../solutions/src/year_2021/day11" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../solutions/src/year_2021/day12" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../solutions/src/year_2021/day13" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../solutions/src/year_2021/day2" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../solutions/src/year_2021/day3" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../solutions/src/year_2021/day6" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../solutions/src/year_2021/day7" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../solutions/src/year_2021/day8" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/../solutions/src/year_2021/day9" isTestSource="false" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+</module>
