@@ -5,7 +5,7 @@ import solve
 fun main() = solve { lines ->
     lines.chunked(3).map {
         it.map {
-            it.toCharArray().toSet()
+            it.toSet()
         }.reduce { acc, chars ->
             acc.intersect(chars)
         }.first()

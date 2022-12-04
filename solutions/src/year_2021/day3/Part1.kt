@@ -1,4 +1,4 @@
-package com.example.pgntogifconverter.util.twentyone.day_3
+package year_2021.day3
 
 import org.junit.Test
 import java.io.File
