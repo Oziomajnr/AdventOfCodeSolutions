@@ -6,7 +6,7 @@ import kotlin.math.abs
 fun main() = solve { lines ->
 
     getVisitedPoints(parseInput(lines), buildList {
-        repeat((1..2).count()) {
+        repeat((2)) {
             add(Position(500, 500))
         }
     })

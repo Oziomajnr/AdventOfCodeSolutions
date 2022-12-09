@@ -4,7 +4,7 @@ import solve
 
 fun main() = solve { lines ->
     getVisitedPoints(parseInput(lines), buildList {
-        repeat((1..10).count()) {
+        repeat(10) {
             add(Position(500, 500))
         }
     })
