@@ -15,9 +15,7 @@ fun main() = solve { lines ->
                 println(totalSignalStrength)
             }
         }
-        if (it is Command.Add) {
-            xValue += it.value
-        }
+        xValue += it.value
     }
     totalSignalStrength
 }
@@ -27,25 +25,17 @@ fun parseInput(lines: List<String>): List<Command> {
         line.split(" ").run {
             when (this[0]) {
                 "addx" -> {
-                    Command.Add(this[1].toInt())
-                }
-
-                "noop" -> {
-                    Command.NoOp()
+                    Command(this[1].toInt(), 2)
                 }
 
                 else -> {
-                    error("Invalid command")
+                    Command(0, 2)
                 }
             }
         }
     }
 }
 
-sealed interface Command {
-    val cycles: Int
+data class Command(val value: Int, val cycles: Int)
 
-    data class Add(val value: Int, override val cycles: Int = 2) : Command
-    data class NoOp(override val cycles: Int = 1) : Command
-}
 

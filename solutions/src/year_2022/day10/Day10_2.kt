@@ -13,19 +13,17 @@ fun main() = solve { lines ->
     parseInput(lines).forEach {
         repeat(it.cycles) {
             numberOfCycles++
-            val crtIndex =  (numberOfCycles-1) % 40
-            if (setOf(
+            val crtIndex = (numberOfCycles - 1) % 40
+            screen[(numberOfCycles - 1) / 40][crtIndex] = if (setOf(
                     spritePosition, spritePosition - 1, spritePosition + 1
                 ).contains(crtIndex)
             ) {
-                screen[(numberOfCycles - 1) / 40][crtIndex] = '#'
+                '#'
             } else {
-                screen[(numberOfCycles - 1) / 40][crtIndex] = '.'
+                '.'
             }
         }
-        if (it is Command.Add) {
             spritePosition += it.value
-        }
     }
     screen.forEach {
         println(it.joinToString(" "))
