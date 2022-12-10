@@ -29,7 +29,7 @@ fun parseInput(lines: List<String>): List<Command> {
                 }
 
                 else -> {
-                    Command(0, 2)
+                    Command(0, 1)
                 }
             }
         }

@@ -14,16 +14,13 @@ fun main() = solve { lines ->
         repeat(it.cycles) {
             numberOfCycles++
             val crtIndex = (numberOfCycles - 1) % 40
-            screen[(numberOfCycles - 1) / 40][crtIndex] = if (setOf(
-                    spritePosition, spritePosition - 1, spritePosition + 1
-                ).contains(crtIndex)
-            ) {
+            screen[(numberOfCycles - 1) / 40][crtIndex] = if (crtIndex in spritePosition - 1..spritePosition + 1) {
                 '#'
             } else {
                 '.'
             }
         }
-            spritePosition += it.value
+        spritePosition += it.value
     }
     screen.forEach {
         println(it.joinToString(" "))
