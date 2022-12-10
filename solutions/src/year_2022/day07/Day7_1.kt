@@ -4,14 +4,14 @@ import solve
 import java.util.*
 
 fun main() = solve { inputLines ->
-    parseInput(inputLines).map {
-        countSize(it)
-    }.sumOf {
+    val cache = mutableMapOf<Folder, Long>()
+    countSize(parseInput(inputLines), cache)
+    cache.map { it.value }.sumOf {
         if (it <= 100_000) it else 0
     }
 }
 
-fun parseInput(inputLines: List<String>): Set<Folder> {
+fun parseInput(inputLines: List<String>): Folder {
     val lines = inputLines.mapNotNull {
         when {
             it.startsWith("$") -> {
@@ -61,7 +61,7 @@ fun parseInput(inputLines: List<String>): Set<Folder> {
         }
 
     }
-    return distinctFolders
+    return distinctFolders.first()
 }
 
 
@@ -70,11 +70,10 @@ interface Input {
     data class Output(val outputType: String, val outputValue: String) : Input
 }
 
-val cache = mutableMapOf<Folder, Long>()
-fun countSize(folder: Folder): Long {
+fun countSize(folder: Folder, cache: MutableMap<Folder, Long>): Long {
     if (cache[folder] != null) return cache[folder]!!
     val result = folder.children.sumOf {
-        countSize(it)
+        countSize(it, cache)
     } + folder.totalSize
     cache[folder] = result
     return result
