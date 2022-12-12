@@ -1,5 +1,6 @@
-package com.example.pgntogifconverter.util.day15
+package year_2021.day15
 
+import com.example.pgntogifconverter.util.day15.Cave
 import java.util.*
 
 class CaveSearcher(private val caves: List<List<Cave>>) {
