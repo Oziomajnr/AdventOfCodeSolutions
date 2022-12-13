@@ -5,88 +5,7 @@ import solve
 import java.math.BigInteger
 
 fun main() = solve { lines ->
-    val monkeys = parseInput(lines)
-    repeat(10000) {
-        println("Round: $it")
-        monkeys.forEach { monkey ->
-            monkey.items.forEach { item ->
-                val newValue = if (monkey.operation.operator == "*") {
-                    item * (monkey.operation.value ?: item)
-                } else {
-                    item + (monkey.operation.value ?: item)
-                }
-                if (newValue.divisibleBy(monkey.testValue)) {
-                    monkeys[monkey.throwToMonkeyOnTrue].items.add(newValue)
-                } else {
-                    monkeys[monkey.throwToMonkeyOnFalse].items.add(newValue)
-                }
-                monkey.numberOfInspections++
-            }
-            monkey.items.clear()
-        }
-    }
-    println(monkeys)
-
-    monkeys.sortedBy {
-        it.numberOfInspections
-    }.takeLast(2).run {
-        get(0).numberOfInspections * get(1).numberOfInspections
-    }
-}
-
-fun BigInteger.divisibleBy(divisor: Int): Boolean {
-    if (this.toString().length <= 2) return this % divisor.toBigInteger() == BigInteger.ZERO
-    val result = when (divisor) {
-        5 -> {
-            this.toString().last().digitToInt() == 5 || this.toString().last().digitToInt() == 0
-        }
-//
-//        7 -> {
-//
-//        }
-
-        13 -> {
-            val stringValue = this.toString()
-            ((stringValue.last().digitToInt() * 4) + stringValue.dropLast(1).map { it.digitToInt() }.sum()) % 13 == 0
-        }
-
-//        11 -> {
-//
-//        }
-//
-//        3 -> {
-//
-//        }
-
-        2 -> {
-            this.toString().last().digitToInt() % 2 == 0
-        }
-
-        17 -> {
-            val stringValue = this.toString()
-            (stringValue.dropLast(1).map { it.digitToInt() }.sum() - (stringValue.last().digitToInt() * 4)) % 17 == 0
-        }
-
-        19 -> {
-            var stringValue = this.toString()
-            while (stringValue.length > 2) {
-                stringValue = ((stringValue.last().digitToInt() * 2) + stringValue.dropLast(1).map { it.digitToInt() }
-                    .sum()).toString()
-            }
-            stringValue.toInt() % 19 == 0
-
-        }
-
-        23 -> {
-            val stringValue = this.toString()
-            ((stringValue.last().digitToInt() * 4) + stringValue.dropLast(1).map { it.digitToInt() }.sum()) % 23 == 0
-        }
-
-        else -> {
-            error(" Invalid input ")
-        }
-    }
-    return result
+    getMonkeyBusiness(lines, 10000, false)
 }
 
 data class Monkey(
@@ -97,15 +16,50 @@ data class Monkey(
     val throwToMonkeyOnFalse: Int,
     var numberOfInspections: Int = 0
 ) {
-
     val items = mutableListOf<BigInteger>()
+}
+
+fun getMonkeyBusiness(lines: List<String>, numberOfRounds: Int, divideBy3: Boolean): Long {
+    val monkeys = parseInput(lines)
+    repeat(numberOfRounds) {
+        monkeys.forEach { monkey ->
+            monkey.items.forEach { item ->
+                val newStressLevel = (if (monkey.operation.operator == "*") {
+                    val product = monkeys.map {
+                        it.testValue
+                    }.fold(1) { acc, i ->
+                        acc * i
+                    }
+                    item * ((monkey.operation.value ?: item) % product.toBigInteger())
+
+                } else {
+                    item + (monkey.operation.value ?: item)
+                }) / (if (divideBy3) 3.toBigInteger() else 1.toBigInteger())
+
+                if (newStressLevel % monkey.testValue.toBigInteger() == BigInteger.ZERO) {
+                    monkeys[monkey.throwToMonkeyOnTrue].items.add(newStressLevel)
+                } else {
+                    monkeys[monkey.throwToMonkeyOnFalse].items.add(newStressLevel)
+                }
+                monkey.numberOfInspections++
+            }
+            monkey.items.clear()
+        }
+    }
+    println(monkeys)
+
+    return monkeys.sortedBy {
+        it.numberOfInspections
+    }.takeLast(2).run {
+        get(0).numberOfInspections.toLong() * get(1).numberOfInspections.toLong()
+    }
 }
 
 fun parseInput(lines: List<String>): List<Monkey> {
     return lines.joinToString("\n").split("\n\n").map {
         it.split("\n").map { it.trimIndent() }.run {
             val operation = this[2].drop(21).split(" ").run {
-                year_2022.day11.Operation(this[0], this[1].toBigIntegerOrNull())
+                Operation(this[0], this[1].toBigIntegerOrNull())
             }
             val id = this[0].drop(7).dropLast(1).toInt()
             val testValue = this[3].drop(19).toInt()

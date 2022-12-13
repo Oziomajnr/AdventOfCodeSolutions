@@ -5,9 +5,8 @@ import java.util.*
 class ShortestPath(
     private val startPoint: Point,
     private val points: List<List<Point>>,
-    val bestPathTable: MutableMap<Point, Pair<Int, Point>>
+    private val bestPathTable: MutableMap<Point, Pair<Int, Point>>
 ) {
-
     private val unVisitedPoints = PriorityQueue<Point> { a, b ->
         (bestPathTable[a]?.first ?: Int.MAX_VALUE).compareTo(
             bestPathTable[b]?.first ?: Int.MAX_VALUE
@@ -39,21 +38,21 @@ class ShortestPath(
         while (unVisitedPoints.isNotEmpty() && bestPathTable[endPoint] == null) {
             solvePart1(unVisitedPoints.poll()!!)
         }
-        return getCavesInPath()
+        return getVisitedPoints()
     }
 
-    fun getCavesInPath(): MutableSet<Point> {
+    private fun getVisitedPoints(): MutableSet<Point> {
         val endPoint = points.flatten().find { it.isEndPoint }!!
-        val cavesInPath = mutableSetOf<Point>()
-        cavesInPath.add(endPoint)
+        val visitedPoints = mutableSetOf<Point>()
+        visitedPoints.add(endPoint)
         bestPathTable.remove(startPoint)
         var x = bestPathTable[endPoint]
         var sum = 0
         while (x != null) {
             sum += x.second.value
-            cavesInPath.add(x.second)
+            visitedPoints.add(x.second)
             x = bestPathTable[x.second]
         }
-        return cavesInPath
+        return visitedPoints
     }
 }
