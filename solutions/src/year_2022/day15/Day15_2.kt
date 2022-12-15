@@ -15,7 +15,7 @@ fun main() = solve { lines ->
         }
     }
     val maxValue = 4000000
-    (0..maxValue).toList().forEach { rowValue ->
+    (0..maxValue).forEach { rowValue ->
 
         val pointThatCannotHaveABeacon = mutableSetOf<IntRange>()
 
@@ -53,7 +53,7 @@ fun main() = solve { lines ->
                 resultPoints.addAll(it)
             }
             val column = (0..maxValue).toSet() - resultPoints.toSet()
-            println(column.single().toLong() * 4000000L + rowValue.toLong())
+            return@solve column.single().toLong() * 4000000L + rowValue.toLong()
         }
     }
 }
