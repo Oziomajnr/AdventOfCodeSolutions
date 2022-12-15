@@ -2,6 +2,7 @@ package year_2022.day14
 
 import solve
 import year_2022.common.Position
+import java.util.Stack
 
 fun main() = solve { lines ->
     val input = lines.map {
@@ -26,6 +27,7 @@ fun main() = solve { lines ->
         }
     }
     grid[0][500 - minYIndex] = '+'
+    val startPosition = Position(0, 500 - minYIndex)
     shrinkedInput.forEach {
         it.windowed(2).forEach { positions ->
             val firstPosition = positions[0]
@@ -54,19 +56,55 @@ fun main() = solve { lines ->
         }
     }
 
+
     grid.forEach {
         it.forEach {
             print(it)
         }
         println()
     }
-    -1
+
+    simulateSandFalling(grid, startPosition)
+    grid.map {
+        it.count {
+            it == 'o'
+        }
+    }.sum()
+
 }
 
-//fun simulateSandFalling(grid: Array<CharArray>, sandPosition: Position){
-//    var currentSandPosition = sandPosition
-//    while (true) {
-//        if(grid[])
-//    }
-//
-//}
+fun simulateSandFalling(grid: Array<CharArray>, startPosition: Position) {
+    val stack = Stack<Position>()
+    stack.push(startPosition)
+
+    while (stack.isNotEmpty()) {
+        if (Position(stack.peek().x + 1, stack.peek().y).run {
+                if (fallsOutsideBound(grid)) return
+                canMoveToPosition(grid, this)
+            }) {
+            stack.push(Position(stack.peek().x + 1, stack.peek().y))
+        } else if (Position(stack.peek().x + 1, stack.peek().y - 1).run {
+                if (fallsOutsideBound(grid)) return
+                canMoveToPosition(grid, this)
+            }) {
+            stack.push(Position(stack.peek().x + 1, stack.peek().y - 1))
+        } else if (Position(stack.peek().x + 1, stack.peek().y + 1).run {
+                if (fallsOutsideBound(grid)) return
+                canMoveToPosition(grid, this)
+            }) {
+            stack.push(Position(stack.peek().x + 1, stack.peek().y + 1))
+        } else {
+            if (stack.peek().fallsOutsideBound(grid)) return
+            val position = stack.pop()
+            grid[position.x][position.y] = 'o'
+        }
+    }
+}
+
+private fun canMoveToPosition(grid: Array<CharArray>, position: Position): Boolean {
+    return grid[position.x][position.y] == '.'
+}
+
+private fun Position.fallsOutsideBound(grid: Array<CharArray>): Boolean {
+    return !(this.x >= 0 && this.x <= grid.lastIndex && this.y >= 0 && this.y <= grid.first().lastIndex)
+}

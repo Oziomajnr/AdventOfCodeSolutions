@@ -1,17 +1,10 @@
 package year_2022.day15
 
 import solve
-import year_2022.common.Position
 import kotlin.math.abs
 
 fun main() = solve { lines ->
-
-    val sensors = lines.map {
-        it.drop(10).split(": closest beacon is at ").run {
-            val sensorToBeaconPair = Pair(this[0].parseToPosition(), this[1].parseToPosition())
-            Sensor(sensorToBeaconPair.first, Beacon(sensorToBeaconPair.second))
-        }
-    }
+    val sensors = parseInput(lines)
     val rowValue = 2000000
 
     val pointThatCannotHaveABeacon = mutableSetOf<IntRange>()
@@ -26,16 +19,5 @@ fun main() = solve { lines ->
     val result = mutableSetOf<Int>()
     pointThatCannotHaveABeacon.forEach { result.addAll(it.toSet()) }
     result.count() - 1
-}
-
-private fun Sensor.getManhattanDistance(): Int {
-    return abs(this.position.x - this.closesBeacon.position.x) + abs(this.position.y - this.closesBeacon.position.y)
-}
-
-private fun String.parseToPosition(): Position {
-    val xYValue = this.split(", ")
-    val x = xYValue[0].drop(2).toInt()
-    val y = xYValue[1].drop(2).toInt()
-    return Position(x, y)
 }
 

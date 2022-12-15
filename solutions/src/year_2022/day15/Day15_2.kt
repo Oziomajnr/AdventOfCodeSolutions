@@ -7,18 +7,10 @@ import kotlin.math.max
 import kotlin.math.min
 
 fun main() = solve { lines ->
-
-    val sensors = lines.map {
-        it.drop(10).split(": closest beacon is at ").run {
-            val sensorToBeaconPair = Pair(this[0].parseToPosition(), this[1].parseToPosition())
-            Sensor(sensorToBeaconPair.first, Beacon(sensorToBeaconPair.second))
-        }
-    }
     val maxValue = 4000000
+    val sensors = parseInput(lines)
     (0..maxValue).forEach { rowValue ->
-
         val pointThatCannotHaveABeacon = mutableSetOf<IntRange>()
-
         sensors.forEach { sensor ->
             val manhattanDistance = sensor.getManhattanDistance()
             val y = abs(sensor.position.y - rowValue)
@@ -58,16 +50,26 @@ fun main() = solve { lines ->
     }
 }
 
-private fun Sensor.getManhattanDistance(): Int {
+fun parseInput(lines: List<String>): List<Sensor> {
+    return lines.map {
+        it.drop(10).split(": closest beacon is at ").run {
+            val sensorToBeaconPair = Pair(this[0].parseToPosition(), this[1].parseToPosition())
+            Sensor(sensorToBeaconPair.first, Beacon(sensorToBeaconPair.second))
+        }
+    }
+}
+
+fun Sensor.getManhattanDistance(): Int {
     return abs(this.position.x - this.closesBeacon.position.x) + abs(this.position.y - this.closesBeacon.position.y)
 }
 
-private fun String.parseToPosition(): Position {
+fun String.parseToPosition(): Position {
     val xYValue = this.split(", ")
     val x = xYValue[0].drop(2).toInt()
     val y = xYValue[1].drop(2).toInt()
     return Position(x, y)
 }
+
 
 data class Sensor(val position: Position, val closesBeacon: Beacon)
 
