@@ -11,14 +11,14 @@ private fun getInputFile(): File {
     val name = Throwable().stackTrace.first { it.className.contains("day") }.fileName
     val day = name.substringBefore("_").removePrefix("Day").padStart(2, '0')
     val part = name.substringAfter("_").removeSuffix(".kt")
-    val file = File("src/main/kotlin/day$day/input$part.txt")
+    val file = File("/Users/oogbe/IdeaProjects/AdventOfCodeSolutions/solutions/src/year_2022/day$day/input$part.txt")
     return if (file.readText().isBlank()) {
-        File("src/main/kotlin/day$day/input1.txt")
+        File("/Users/oogbe/IdeaProjects/AdventOfCodeSolutions/solutions/src/year_2022/day$day/input1.txt")
     } else file
 }
 
 private fun getInput(): String {
-    return getInputFile().readText().trim()
+    return getInputFile().readText()
 }
 
 fun printInput(input: String) {
@@ -37,7 +37,7 @@ fun printInput(input: String) {
 }
 
 @OptIn(ExperimentalTime::class)
-fun solve(additionalTiming: Boolean = false, solve: (List<String>) -> Any?) {
+fun solve(solve: (List<String>) -> Any?) {
     val input = getInput()
     printInput(input)
     val (answer, duration) = measureTimedValue {
@@ -46,18 +46,8 @@ fun solve(additionalTiming: Boolean = false, solve: (List<String>) -> Any?) {
     val time = "${String.format("%.3f", duration.inWholeMicroseconds / 1000.0)}ms"
     if (answer != "kotlin.Unit") {
         println("Out: $answer [$time]")
-        Toolkit.getDefaultToolkit().systemClipboard.setContents(StringSelection(answer), null)
-        Thread.sleep(200) // Wait so the system has chance to notice the clipboard change
+
     } else {
         println("No answer [$time]")
-    }
-
-    if (additionalTiming) {
-        println("Rerunning for timing")
-        val count = if (duration < 100.milliseconds) 1000 else 10
-        val fastest = List(count) {
-            measureTime { solve(input.lines()) }
-        }.minOrNull()!!
-        println("Fastest time: [${String.format("%.3f", fastest.inWholeMicroseconds / 1000.0)}ms]")
     }
 }
