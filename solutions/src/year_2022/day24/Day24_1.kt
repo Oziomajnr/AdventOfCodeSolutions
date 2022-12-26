@@ -47,7 +47,7 @@ fun main() = solve { lines ->
     x3
 }
 
-val cache = mutableMapOf<Pair<Position, String>, Int>()
+val cache = mutableSetOf<Pair<Position, Int>>()
 val minuteToElves = mutableMapOf<Int, Set<Elf>>()
 
 fun findMinimumMinutesToReachEndPositionBfs(
@@ -67,7 +67,7 @@ fun findMinimumMinutesToReachEndPositionBfs(
         val currentMinute = currentEntry.first
         val currentPosition = currentEntry.second
 
-        if (minuteToElves[currentMinute + 1] == null) {
+        if (minuteToElves[currentMinute % (maxX * maxY) + 1] == null) {
             elves.forEach {
                 it.moveForward(maxX, maxY)
             }
@@ -78,16 +78,13 @@ fun findMinimumMinutesToReachEndPositionBfs(
             }.toSet()
         }
 
-        if (cache[currentPosition to elves.joinToString {
-                it.currentPositionToString()
-            }] == null) {
+        if (!cache.contains(currentPosition to currentMinute % ((maxX * maxY) + 1))) {
             val validCandidates = listOf(
                 currentPosition.copy(x = currentPosition.x + 1),
                 currentPosition.copy(y = currentPosition.y + 1),
                 currentPosition.copy(y = currentPosition.y - 1),
                 currentPosition,
-                currentPosition.copy(x = currentPosition.x - 1)
-
+                currentPosition.copy(x = currentPosition.x - 1),
             ).filter { possibleNextMove ->
                 possibleNextMove.x >= 0 && possibleNextMove.y >= 0 && possibleNextMove.x <= maxX && possibleNextMove.y <= maxY && !minuteToElves[currentMinute + 1]!!.map {
                     it.currentPosition
@@ -99,21 +96,13 @@ fun findMinimumMinutesToReachEndPositionBfs(
                 }
                 queue.offer(currentMinute + 1 to it)
             }
-            cache[currentPosition to elves.joinToString {
-                it.currentPositionToString()
-            }] = -1
-        } else {
-            println("cache found at $currentPosition")
+            cache.add(currentPosition to currentMinute % ((maxX * maxY) + 1))
         }
     }
     error("Path now found")
 }
 
 data class Elf(val initialPosition: Position, val direction: Direction) {
-    fun currentPositionToString(): String {
-        return "${currentPosition.x},${currentPosition.y}"
-    }
-
     var currentPosition: Position = initialPosition
     fun moveForward(maxX: Int, maxY: Int) {
         when (direction) {
