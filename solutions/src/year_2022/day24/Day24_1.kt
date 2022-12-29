@@ -5,14 +5,19 @@ import year_2022.day09.Position
 import java.util.LinkedList
 
 fun main() = solve { lines ->
-    val elves = mutableSetOf<Elf>()
-    val blockedPositions = mutableSetOf<Position>()
+    val (elves, blockedPositions) = parseInput(lines)
     val startPosition = Position(0, 1)
     val endPosition = Position(
         lines.lastIndex, lines.last().indexOf('.')
     )
     val maxX = lines.lastIndex
     val maxY = lines.first().lastIndex
+    findMinimumMinutesToReachEndPositionBfs(elves, startPosition, endPosition, maxX, maxY, 0, blockedPositions) + 1
+}
+
+fun parseInput(lines: List<String>): Pair<Set<Elf>, Set<Position>> {
+    val elves = mutableSetOf<Elf>()
+    val blockedPositions = mutableSetOf<Position>()
     lines.forEachIndexed { x, line ->
         line.forEachIndexed { y, character ->
             when (character) {
@@ -38,17 +43,11 @@ fun main() = solve { lines ->
             }
         }
     }
-    val x1 =
-        findMinimumMinutesToReachEndPositionBfs(elves, startPosition, endPosition, maxX, maxY, 0, blockedPositions) + 1
-    val x2 =
-        findMinimumMinutesToReachEndPositionBfs(elves, endPosition, startPosition, maxX, maxY, x1, blockedPositions)
-    val x3 =
-        findMinimumMinutesToReachEndPositionBfs(elves, startPosition, endPosition, maxX, maxY, x2, blockedPositions) + 1
-    x3
+    return elves to blockedPositions
 }
 
 val cache = mutableSetOf<Pair<Position, Int>>()
-val minuteToElves = mutableMapOf<Int, Set<Elf>>()
+val minuteToElves = mutableMapOf<Int, Set<Position>>()
 
 fun findMinimumMinutesToReachEndPositionBfs(
     elves: Set<Elf>,
@@ -59,7 +58,6 @@ fun findMinimumMinutesToReachEndPositionBfs(
     initialMinute: Int,
     blockedPositions: Set<Position>
 ): Int {
-    cache.clear()
     val queue = LinkedList<Pair<Int, Position>>()
     queue.offer(initialMinute to startPosition)
     while (queue.isNotEmpty()) {
@@ -74,7 +72,7 @@ fun findMinimumMinutesToReachEndPositionBfs(
             minuteToElves[currentMinute + 1] = elves.map {
                 val newElf = it.copy()
                 newElf.currentPosition = it.currentPosition.copy()
-                newElf
+                newElf.currentPosition
             }.toSet()
         }
 
@@ -86,9 +84,9 @@ fun findMinimumMinutesToReachEndPositionBfs(
                 currentPosition,
                 currentPosition.copy(x = currentPosition.x - 1),
             ).filter { possibleNextMove ->
-                possibleNextMove.x >= 0 && possibleNextMove.y >= 0 && possibleNextMove.x <= maxX && possibleNextMove.y <= maxY && !minuteToElves[currentMinute + 1]!!.map {
-                    it.currentPosition
-                }.toSet().contains(possibleNextMove) && !blockedPositions.contains(possibleNextMove)
+                possibleNextMove.x >= 0 && possibleNextMove.y >= 0 && possibleNextMove.x <= maxX && possibleNextMove.y <= maxY && !minuteToElves[currentMinute + 1]!!.contains(
+                    possibleNextMove
+                ) && !blockedPositions.contains(possibleNextMove)
             }
             validCandidates.forEach {
                 if (it == endPosition) {
