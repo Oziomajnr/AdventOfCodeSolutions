@@ -1,0 +1,74 @@
+import * as fs from 'fs';
+
+//Part1
+
+fs.readFile('input1.txt', 'utf8', function (err, input) {
+    const lines = input.split("\n")
+    let symbols = new Set<string>(input.split("").filter((value) => value.match(/(\d+|\.|\n)/g) == null))
+    console.log(lines.map((line, index) => {
+        let regex = new RegExp(/\d+/g)
+        let matches: { value: string, index: number }[] = []
+        let matched;
+        while ((matched = regex.exec(line)) != null) {
+            matches.push({
+                value: matched[0],
+                index: matched.index
+            })
+        }
+        regex.lastIndex = 0
+        return matches.filter(match => {
+            let startIndex, endIndex;
+            if (match.index == 0) startIndex = 0; else startIndex = match.index - 1
+            if (match.index + match.value.length >= line.length) endIndex = line.length - 1; else endIndex = match.index + match.value.length
+            return symbols.has(line[match.index - 1]) || symbols.has(line[match.index + match.value.length])
+                || (lines[index - 1] && symbols.has(lines[index - 1].substring(startIndex,endIndex)))
+                || (lines[index + 1] && symbols.has(lines[index + 1].substring(startIndex, endIndex)))
+
+        }).reduce((a, b) => a + +b.value, 0)
+    }).reduce((a, b) => a + b, 0))
+});
+
+//Part2
+fs.readFile('input1.txt', 'utf8', function (err, input) {
+    const lines = input.split("\n")
+    let map: Map<string, number[]> = new Map()
+    lines.forEach((line, index) => {
+        let regex = new RegExp(/\d+/g), matches = [], matched;
+        while ((matched = regex.exec(line)) != null) {
+            matches.push({
+                value: matched[0],
+                index: matched.index
+            })
+        }
+         matches.forEach(match => {
+            let startIndex, endIndex;
+            if (match.index == 0) startIndex = 0; else startIndex = match.index - 1
+            if (match.index + match.value.length >= line.length) endIndex = line.length; else endIndex = match.index + match.value.length + 1;
+            [-1, match.value.length].forEach(nexIndex => {
+                if (line[match.index + nexIndex] == '*') {
+                    let value = (map.get(`${index},${match.index  + nexIndex}`) || [])
+                    value.push(+match.value)
+                    map.set(`${index},${match.index  + nexIndex}`, value)
+                }
+            });
+
+            [1, -1].forEach(nexIndex => {
+                if (lines[index - nexIndex]) {
+                    [...lines[index - nexIndex].substring(startIndex, endIndex)].forEach((value, currentIndex) => {
+                        if (value == '*') {
+                            let value = (map.get(`${index - nexIndex},${currentIndex + startIndex}`) || [])
+                            value.push(+match.value)
+                            map.set(`${index - nexIndex},${currentIndex + startIndex}`, value)
+                        }
+                    })
+                }
+            })
+
+        })
+    })
+    let result = 0;
+    map.forEach((value, key) => {
+        if (value.length == 2) result += value[0] * value[1]
+    })
+    console.log(result)
+});
