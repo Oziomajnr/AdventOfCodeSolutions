@@ -65,6 +65,7 @@ fun main() {
         it.cell
     }
 
+    val validPattern = "|LF7J".toSet()
     val allTiles = newLines.mapIndexed { x, value ->
         value.mapIndexed { y, c ->
             Pair(x, y)
@@ -72,19 +73,12 @@ fun main() {
             !visitedCells.contains(it.first to it.second)
         }
     }.flatten().filter {
-        if (it.first == 9 && it.second == 81) {
-            println(newLines[it.first][it.second])
-        }
-
-        val substring = (it.second..newLines[0].lastIndex).filter { k ->
-            visitedCells.contains(it.first to k) && ("|LF7J".contains(newLines[it.first][k]))
+        Regex("(L7|FJ|\\|)").findAll((it.second..newLines[0].lastIndex).filter { k ->
+            visitedCells.contains(it.first to k) && (validPattern.contains(newLines[it.first][k]))
         }.map { k ->
             newLines[it.first][k]
-        }.joinToString("")
-        val cc = (substring.count { it == '|' } + substring.windowed(2).count {
-            it == "L7" || it == "FJ"
-        })
-        cc % 2 != 0
+        }.joinToString("")).count() % 2 != 0
+
     }.toSet()
 
     println("Part 2 Solution ${allTiles.size}")
