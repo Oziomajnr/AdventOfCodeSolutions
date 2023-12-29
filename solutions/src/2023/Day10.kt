@@ -1,4 +1,8 @@
-val input = File("src/main/kotlin/com/ozioma/input1.txt").readText()
+package com.ozioma
+
+import java.util.*
+
+//Theorem https://en.wikipedia.org/wiki/Point_in_polygon
 
 fun main() {
     val lines = input.trim().split("\n")
@@ -34,11 +38,9 @@ fun main() {
     val visited = mutableSetOf<CacheValue>()
     while (stack.isNotEmpty()) {
         val state = stack.pop()
-        println(newLines[state.currentPipe.x][state.currentPipe.y])
-
         if (state.currentPipe == state.grid[startCell.first][startCell.second] && visited.size > 0) {
-            println(visited.size / 2)
-            return
+            println("Part 1 solution ${visited.size / 2}")
+            break
         }
         listOf(
             (state.currentPipe.x - 1 to state.currentPipe.y) to 'N',
@@ -58,6 +60,34 @@ fun main() {
             stack.push(State(state.grid, state.grid[it.first.first][it.first.second], startCell))
         }
     }
+
+    val visitedCells = visited.map {
+        it.cell
+    }
+
+    val allTiles = newLines.mapIndexed { x, value ->
+        value.mapIndexed { y, c ->
+            Pair(x, y)
+        }.filter {
+            !visitedCells.contains(it.first to it.second)
+        }
+    }.flatten().filter {
+        if (it.first == 9 && it.second == 81) {
+            println(newLines[it.first][it.second])
+        }
+
+        val substring = (it.second..newLines[0].lastIndex).filter { k ->
+            visitedCells.contains(it.first to k) && ("|LF7J".contains(newLines[it.first][k]))
+        }.map { k ->
+            newLines[it.first][k]
+        }.joinToString("")
+        val cc = (substring.count { it == '|' } + substring.windowed(2).count {
+            it == "L7" || it == "FJ"
+        })
+        cc % 2 != 0
+    }.toSet()
+
+    println("Part 2 Solution ${allTiles.size}")
 }
 
 data class State(val grid: List<List<Pipe>>, val currentPipe: Pipe, val startCell: Pair<Int, Int>)
