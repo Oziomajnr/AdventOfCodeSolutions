@@ -1,54 +1,89 @@
 package `2024`
 
+import utils.Point
 import java.io.File
-import java.math.BigDecimal
-import java.math.BigInteger
+
 
 fun main() {
-        File("/Users/oogbe/IdeaProjects/AdventOfCodeSolutions/solutions/src/2024/input.txt").readText().split("\n\n")
-            .map {
-                val x = it.split("\n")
-                val buttonA = Regex("\\d+").findAll(x[0]).toList().map { it.value.toInt() }.run {
-                    Button("A", this[0], this[1])
-                }
-                val buttonB = Regex("\\d+").findAll(x[1]).toList().map { it.value.toInt() }.run {
-                    Button("A", this[0], this[1])
-                }
-                val prize = Regex("\\d+").findAll(x[2]).toList().map { it.value.toInt() }.run {
-                    Prize(
-                        this[0].toBigInteger() + 10000000000000.toBigInteger(),
-                        this[1].toBigInteger() + 10000000000000.toBigInteger()
-                    )
-                }
-                val k = solveSimultaneousEquations(
-                    a1 = buttonA.xDiff.toBigDecimal(),
-                    b1 = buttonB.xDiff.toBigDecimal(),
-                    c1 = prize.x.toBigDecimal(),
-                    a2 = buttonA.yDiff.toBigDecimal(),
-                    b2 = buttonB.yDiff.toBigDecimal(),
-                    c2 = prize.y.toBigDecimal()
-                )
-                k
-            }.sumOf {
-                if (it.x.isWholeNumber() && it.y.isWholeNumber()) (it.x * 3.toBigDecimal() + it.y).toBigInteger() else BigInteger.ZERO
-            }.also { println(it) }
 
+    (1..1000).forEach { seconds ->
+        val input =
+            File("/Users/oogbe/IdeaProjects/AdventOfCodeSolutions/solutions/src/2024/input.txt").readText().split("\n")
+                .map {
+                    Regex("-?\\d*\\.?\\d+").findAll(it).toList().let {
+                        Robot(
+                            Point(it[0].value.toInt(), it[1].value.toInt()),
+                            Point(it[2].value.toInt(), it[3].value.toInt())
+                        )
+                    }
+                }.map {
+                    it.copy(position = getNewPosition(it, 2851 + 101 * seconds))
+                }
+        val x = (0..102).map { y ->
+            (0..100).map { x ->
+                "."
+            }.toMutableList()
+        }.toMutableList()
+        var firstQudrant = 0
+        var secondQudrant = 0
+        var thirdQudrant = 0
+        var fourthQudrant = 0
+        val x1 = 50
+        val y1 = 51
 
+        input.forEach {
+            if (it.position.x < x1 && it.position.y < y1) firstQudrant++
+            if (it.position.x < x1 && it.position.y > y1) secondQudrant++
+            if (it.position.x > x1 && it.position.y < y1) thirdQudrant++
+            if (it.position.x > x1 && it.position.y > y1) fourthQudrant++
+        }
+
+        input.forEach {
+            if (x[it.position.y][it.position.x] == ".") x[it.position.y][it.position.x] =
+                "1" else x[it.position.y][it.position.x] = (x[it.position.y][it.position.x].toInt() + 1).toString()
+        }
+        //write each lins to file
+        val file =
+            File("/Users/oogbe/IdeaProjects/AdventOfCodeSolutions/solutions/src/2024/output/output.txt").let {
+                it.createNewFile()
+                it
+            }
+        //create file if not exist
+        file.createNewFile()
+        x.forEach {
+            println(it.joinToString(""))
+            file.appendText(it.joinToString(""))
+            file.appendText("\n")
+        }
+        file.appendText(seconds.toString())
+
+        println(firstQudrant * secondQudrant * thirdQudrant * fourthQudrant)
+
+    }
 }
 
-fun BigDecimal.isWholeNumber() = stripTrailingZeros().scale() <= 0
+//12
+private fun getNewPosition(robot: Robot, seconds: Int): Point {
+    val yMax = 103
+    val xMax = 101
+    val newXPosition = robot.position.x + (seconds * robot.velocity.x)
+    val newYPosition = robot.position.y + (seconds * robot.velocity.y)
+    val finalX = if (newXPosition < 0) {
+        (xMax + ((newXPosition % (xMax))))
+    } else if (newXPosition >= xMax) {
+        newXPosition % (xMax)
+    } else {
+        newXPosition
+    }
 
-data class Solution(val x: BigDecimal, val y: BigDecimal)
-
-fun solveSimultaneousEquations(
-    a1: BigDecimal, b1: BigDecimal, c1: BigDecimal,
-    a2: BigDecimal, b2: BigDecimal, c2: BigDecimal
-): Solution {
-    val determinant = a1 * b2 - a2 * b1
-    val x = (c1 * b2 - c2 * b1).divide(determinant, 3, BigDecimal.ROUND_HALF_UP)
-    val y = (a1 * c2 - a2 * c1).divide(determinant, 3, BigDecimal.ROUND_HALF_UP)
-    return Solution(x, y)
+    val finalY = if (newYPosition < 0) {
+        yMax + (newYPosition % yMax)
+    } else if (newYPosition >= yMax) {
+        newYPosition % (yMax)
+    } else {
+        newYPosition
+    }
+    return Point(if (finalX == xMax) 0 else finalX, if (finalY == yMax) 0 else finalY)
 }
 
-data class Prize(val x: BigInteger, val y: BigInteger)
-data class Button(val name: String, val xDiff: Int, val yDiff: Int)
+private data class Robot(val position: Point, val velocity: Point)

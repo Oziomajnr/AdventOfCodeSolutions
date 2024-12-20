@@ -1,78 +1,54 @@
 package `2024`
 
-import common.Direction
-import utils.Point
 import java.io.File
-
-data class Perimeter(val point: Point, val direction: Direction)
+import java.math.BigDecimal
+import java.math.BigInteger
 
 fun main() {
-    val input =
-        File("/Users/oogbe/IdeaProjects/AdventOfCodeSolutions/solutions/src/2024/input.txt").readText().split("\n")
-    ('A'..'Z').filter { xx -> input.any { it.contains(xx) } }.map { symbol ->
-        val visited = mutableSetOf<Point>()
-        var result1 = 0
-        var result2 = 0
-        while (input.mapIndexed { x, s -> s.mapIndexed { y, c -> Point(x, y) } }.flatten()
-                .find { input[it.x][it.y] == symbol && !visited.contains(it) } != null
-        ) {
-            val kk = input.mapIndexed { x, s -> s.mapIndexed { y, c -> Point(x, y) } }.flatten()
-                .find { input[it.x][it.y] == symbol && !visited.contains(it) }!!
-            val newVisited = mutableSetOf<Point>()
-            newVisited.add(kk)
-            val perimeterCount = mutableMapOf<Char, List<Perimeter>>()
-            findAreaParameter(symbol, input, newVisited, kk, perimeterCount)
-            val sides = perimeterCount.getOrDefault(symbol, emptyList()).let { perimeters ->
-                perimeters.filter { it.direction == Direction.Up || it.direction == Direction.Down }
-                    .groupBy { it.direction to it.point.x }
-                    .mapValues { it.value.sortedBy { it.point.y } }.mapValues {
-                        it.value.windowed(2).count { it[1].point.y - it[0].point.y > 1 } + 1
-                    }.values.sum() + perimeters.filter { it.direction == Direction.Right || it.direction == Direction.Left }
-                    .groupBy { it.direction to it.point.y }
-                    .mapValues { it.value.sortedBy { it.point.x } }.mapValues {
-                        it.value.windowed(2).count { it[1].point.x - it[0].point.x > 1 } + 1
-                    }.values.sum()
-            }
-            visited.addAll(newVisited)
+        File("/Users/oogbe/IdeaProjects/AdventOfCodeSolutions/solutions/src/2024/input.txt").readText().split("\n\n")
+            .map {
+                val x = it.split("\n")
+                val buttonA = Regex("\\d+").findAll(x[0]).toList().map { it.value.toInt() }.run {
+                    Button("A", this[0], this[1])
+                }
+                val buttonB = Regex("\\d+").findAll(x[1]).toList().map { it.value.toInt() }.run {
+                    Button("A", this[0], this[1])
+                }
+                val prize = Regex("\\d+").findAll(x[2]).toList().map { it.value.toInt() }.run {
+                    Prize(
+                        this[0].toBigInteger() + 10000000000000.toBigInteger(),
+                        this[1].toBigInteger() + 10000000000000.toBigInteger()
+                    )
+                }
+                val k = solveSimultaneousEquations(
+                    a1 = buttonA.xDiff.toBigDecimal(),
+                    b1 = buttonB.xDiff.toBigDecimal(),
+                    c1 = prize.x.toBigDecimal(),
+                    a2 = buttonA.yDiff.toBigDecimal(),
+                    b2 = buttonB.yDiff.toBigDecimal(),
+                    c2 = prize.y.toBigDecimal()
+                )
+                k
+            }.sumOf {
+                if (it.x.isWholeNumber() && it.y.isWholeNumber()) (it.x * 3.toBigDecimal() + it.y).toBigInteger() else BigInteger.ZERO
+            }.also { println(it) }
 
-            result1 += perimeterCount[symbol]!!.size * newVisited.size
-            result2 += sides * newVisited.size
-        }
-        result1 to result2
-    }.reduce { a, acc -> a.first + acc.first to a.second + acc.second }.also {
-        println("Part1:${it.first}  Part2: ${it.second}")
-    }
+
 }
 
+fun BigDecimal.isWholeNumber() = stripTrailingZeros().scale() <= 0
 
-fun findAreaParameter(
-    symbol: Char,
-    input: List<String>,
-    visited: MutableSet<Point>,
-    currentPoint: Point,
-    perimeterCount: MutableMap<Char, List<Perimeter>>
-) {
-    val candidates = listOf(0 to 1, 1 to 0, 0 to -1, -1 to 0)
-    perimeterCount[symbol] = perimeterCount.getOrDefault(symbol, emptyList()) + candidates.filter {
-        val newPoint = currentPoint.copy(x = currentPoint.x + it.first, y = currentPoint.y + it.second)
-        newPoint.x !in input.indices || newPoint.y !in input.first().indices || input.getOrNull(newPoint.x)
-            ?.getOrNull(newPoint.y) != symbol
-    }.map {
-        when (it) {
-            0 to 1 -> Perimeter(currentPoint, Direction.Right)
-            1 to 0 -> Perimeter(currentPoint, Direction.Down)
-            0 to -1 -> Perimeter(currentPoint, Direction.Left)
-            -1 to 0 -> Perimeter(currentPoint, Direction.Up)
-            else -> error("")
-        }
-    }
-    candidates.map { currentPoint.x + it.first to currentPoint.y + it.second }
-        .filter { it.first in input.indices && it.second in input.first().indices && input[it.first][it.second] == symbol }
-        .forEach {
-            if (!visited.contains(Point(it.first, it.second))) {
-                visited.add(Point(it.first, it.second))
-                findAreaParameter(symbol, input, visited, Point(it.first, it.second), perimeterCount)
-            }
-        }
+data class Solution(val x: BigDecimal, val y: BigDecimal)
 
+fun solveSimultaneousEquations(
+    a1: BigDecimal, b1: BigDecimal, c1: BigDecimal,
+    a2: BigDecimal, b2: BigDecimal, c2: BigDecimal
+): Solution {
+    val determinant = a1 * b2 - a2 * b1
+    val x = (c1 * b2 - c2 * b1).divide(determinant, 3, BigDecimal.ROUND_HALF_UP)
+    val y = (a1 * c2 - a2 * c1).divide(determinant, 3, BigDecimal.ROUND_HALF_UP)
+    return Solution(x, y)
 }
+
+data class Prize(val x: BigInteger, val y: BigInteger)
+data class Button(val name: String, val xDiff: Int, val yDiff: Int)
