@@ -8,7 +8,7 @@ fun main() {
             listOf(this[0] to this[1], this[1] to this[0])
         }
     }.flatten().groupBy { it.first }.mapValues { it.value.map { it.second } }.run {
-        println(getLongest(this))
+        println("Part2: ${getLongest(this).joinToString(",")}")
         this.map { entry ->
             this[entry.key]!!.mapNotNull {
                 this[it]?.intersect((this[entry.key]?.toSet() ?: emptySet()).toSet())?.map { xxx ->
@@ -21,8 +21,7 @@ fun main() {
     }.flatten().sortedBy { listOf(it.first, it.second, it.third).sorted().joinToString("") }.toSet().run {
         filter { it.first.startsWith("t") || it.second.startsWith("t") || it.third.startsWith("t") }
             .apply {
-                println(this)
-                println(this.size)
+                println("Part1: ${this.size}")
             }
     }
 }

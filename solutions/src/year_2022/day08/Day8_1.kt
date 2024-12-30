@@ -1,5 +1,6 @@
 package year_2022.day08
 
+import common.transpose
 import solve
 import java.util.PriorityQueue
 
@@ -41,17 +42,5 @@ data class Tree(val height: Int, val positionX: Int, val positionY: Int) : Compa
         return this.height.compareTo(other.height)
     }
 
-}
-
-fun <T> List<List<T>>.transpose(initializer: () -> T): List<List<T>> {
-    return List(this.first().size) {
-        List(this.size) {
-            initializer()
-        }
-    }.mapIndexed { x, ts ->
-        List(ts.size) { y ->
-            this[y][x]
-        }
-    }
 }
 

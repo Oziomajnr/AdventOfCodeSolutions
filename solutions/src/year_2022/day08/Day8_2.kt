@@ -1,5 +1,6 @@
 package year_2022.day08
 
+import common.transpose
 import solve
 
 fun main() = solve { lines ->

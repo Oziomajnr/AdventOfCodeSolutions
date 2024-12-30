@@ -1,6 +1,5 @@
 package `2024`
 
-import year_2022.day08.transpose
 import java.io.File
 
 //fun main() {

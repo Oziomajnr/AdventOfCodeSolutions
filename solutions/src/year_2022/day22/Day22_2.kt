@@ -1,8 +1,8 @@
 package year_2022.day22
 
+import common.transpose
 import solve
 import year_2022.common.Position
-import year_2022.day08.transpose
 
 fun main() = solve { lines ->
     val (input, instructions) = parseInput(lines)
